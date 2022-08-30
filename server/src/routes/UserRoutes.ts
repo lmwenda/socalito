@@ -1,11 +1,26 @@
-import { Router, Request, Response } from "express";
-// import { UserController } from "../Controller/UserController";
 import { user_endpoints } from '../utils/endpoints';
+import { Router, Request, Response } from "express";
+import { UserController } from "../controllers/UserController";
 
-const router = Router();
+const router: Router = Router();
 
-router.get(user_endpoints.CREATE_USER, (req: Request, res: Response) => {
-    
+router.post(user_endpoints.CREATE_USER, (req: Request, res: Response) => {
+    const user = new UserController({ 
+        id: "", 
+        createdAt: new Date(), 
+        updatedAt: new Date(), 
+        email: req.body.email,
+        password: req.body.password, 
+        profile: {
+            firstName: "",
+            lastName: "",
+            username: null,
+            profilePicture: "",
+            category: null
+        } 
+    })
+
+    user.createUser(res);
 })
 
 export default router;
