@@ -1,16 +1,13 @@
-import { PrismaClient, Profile, User } from "@prisma/client";
+import { Post, PrismaClient, Profile, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { Response } from "express";
 import jwt from "jsonwebtoken";
 import AuthenticateUser from "../authentication/AuthenticateUser";
-import { CreateUserType } from "../utils/exportedDefinitions";
+import { CreateUserType, Payload } from "../utils/exportedDefinitions";
 
 type DataPayload = {
     message: string,
-    payload: {
-        calitoken: string | null,
-        user: User
-    } | null
+    payload: Payload
 }
 
 const prisma = new PrismaClient()
@@ -72,7 +69,8 @@ export class UserController implements User{
             message: "Successfully Created a new account...", 
             payload:  {
                 calitoken: null,
-                user: user
+                users: user,
+                posts: []
             }
         })
     }
@@ -112,15 +110,108 @@ export class UserController implements User{
             message: "Succesfully Signed into your Account...", 
             payload: {
                 calitoken: token,
-                user: _user
+                users: _user,
+                posts: null
             }
         }
         );
         res.setHeader("calitoken", token);
     }
 
-    public async updateProfile(res: Response<DataPayload>) {
-        return;
+    public async updateProfile(res: Response<DataPayload>, { firstName, lastName, username, category }: Profile) {
+        const updatedUser: User = await prisma.user.update({
+            where: {
+              id: this.id
+            },
+            data: {
+                profile: {
+                    firstName,
+                    lastName,
+                    username,
+                    category
+                }
+            }
+        });
+
+        res.send({ 
+            message: `Successfully Updated ${updatedUser.email}'s Profile`, 
+            payload: { 
+                calitoken: null,
+                users: updatedUser,
+                posts: null
+            }
+        })
     }
 
+    public async getAllUsers(res: Response<DataPayload>)
+    {
+        const users: User[] = await prisma.user.findMany({
+            include: {
+                posts: true
+            }
+        });
+
+        res.send({
+            message: "Retrieved All Users on Socalito",
+            payload: {
+                calitoken: null,
+                users: users,
+                posts: null
+            }
+        })
+    }
+
+    public async getUser(res: Response<DataPayload>)
+    {
+        const foundUser: User | null = await prisma.user.findUnique({
+            where: {
+                id: this.id
+            }
+        });
+
+        res.send({ message: `Retrieved ${this.email}'s Profile`, payload: {
+            calitoken: null,
+            users: foundUser,
+            posts: null
+        } })
+    }
+
+    public async getAllUsersPosts(res: Response<DataPayload>)
+    {
+        const foundUser: (User & { posts: Post[]; }) | null = await prisma.user.findUnique({
+            where: {
+                id: this.id
+            },
+            include: {
+                posts: true
+            }
+        });
+
+        res.send({
+            message: `Revtrieved ${this.email}'s Posts`,
+            payload: {
+                calitoken: null,
+                users: foundUser,
+                posts: foundUser?.posts
+            }
+        })
+    }
+
+    public async deleteAccount(res: Response<DataPayload>)
+    {
+        const user: User = await prisma.user.delete({
+            where: {
+                id: this.id
+            }
+        })
+
+        res.send({ 
+            message: `Account Deleted: ${user.email}`,
+            payload: {
+                calitoken: null,
+                users: user,
+                posts: null
+            }
+        })
+    }
 }
