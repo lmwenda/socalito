@@ -3,11 +3,11 @@ import bcrypt from "bcryptjs";
 import { Response } from "express";
 import jwt from "jsonwebtoken";
 import AuthenticateUser from "../authentication/AuthenticateUser";
-import { CreateUserType, Payload } from "../utils/exportedDefinitions";
+import { CreateUserType, UserPayload } from "../utils/exportedDefinitions";
 
 type DataPayload = {
     message: string,
-    payload: Payload
+    payload: UserPayload
 }
 
 const prisma = new PrismaClient()

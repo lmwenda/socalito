@@ -13,6 +13,7 @@ const app: Application = express();
 
 // Routes and Middlewares
 
+import PostRoutes from "./routes/PostRoutes";
 import UserRoutes from "./routes/UserRoutes";
 
 app.use(
@@ -22,7 +23,8 @@ app.use(
 );
 app.use(express.json());
 
-app.use("/api/users", UserRoutes)
+app.use("/api/posts", PostRoutes);
+app.use("/api/users", UserRoutes);
 
 // Server Listening
 

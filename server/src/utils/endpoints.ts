@@ -11,8 +11,8 @@ enum user_endpoints {
 enum post_endpoints {
     GET_POST = "/post/:post_id",
     CREATE_POST = "/create",
-    UPDATE_POST = "/update/post/:post_id", // USER_ID REQUIRED
-    DELETE_POST = "/delete/post/:post_id", // USER_ID REQUIRED
+    UPDATE_POST = "/update/post/:post_id", // POST_ID REQUIRED
+    DELETE_POST = "/delete/post/:post_id", // POST_ID REQUIRED
     GET_ALL_POSTS = "/get/all",
 }
 

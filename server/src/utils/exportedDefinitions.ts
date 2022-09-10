@@ -7,10 +7,15 @@ type CreateUserType = {
     password: string
 }
 
-type Payload = {
+type UserPayload = {
     calitoken: string | null,
     users: User | User[] | null,
     posts: Post | Post[] | null | undefined
-} | null
+} | null;
 
-export { CreateUserType, Payload }
+type PostPayload = {
+    post: Post | null,
+    posts: Post | Post[] | null | undefined
+}
+
+export { CreateUserType, UserPayload, PostPayload  }

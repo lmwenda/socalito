@@ -24,6 +24,7 @@ model Post {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   title     String
   content   String?
+  attachments String[]
   author    User    @relation(references: [id], fields: [authorId], onDelete: Cascade)
   authorId  String  @db.ObjectId
 }
